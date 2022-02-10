@@ -1,0 +1,25 @@
+<html>
+    <head>
+    </head>
+    <body style="background: #FFA0A0">
+        Hello from the child
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script>
+            $(document).ready(function() {
+                $(window).on('message', function(e) {
+                    var event = e.originalEvent;
+                    if (event.data.type == 'initialized') {
+                        console.log('[CHILD]: Initialized received');
+                        localStorage.setItem('parent-origin', event.origin);
+                    } else if (event.data.type == 'unload') {
+                        console.log('[CHILD]: Unloading');
+                        localStorage.removeItem('parent-origin');
+                    }
+                });
+
+                console.log('[CHILD]: Initializing');
+                window.parent.postMessage({ type: 'initializing' }, "*");
+            });
+        </script>
+    </body>
+</html>

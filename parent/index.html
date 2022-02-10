@@ -1,0 +1,26 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>Parent container</h1>
+        <iframe id="embedded" src="http://localhost:3001"></iframe>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script>
+            var iframe = document.getElementById('embedded').contentWindow;
+            $(document).ready(function() {
+                $(window).on("message", function(e) {
+                    var event = e.originalEvent;
+                    if (event.data.type == 'initializing') {
+                        console.log('[PARENT]: Initializing received');
+                        iframe.postMessage({ type: 'initialized'}, 'http://localhost:3001');
+                    }
+                });
+            });
+
+            window.addEventListener('beforeunload', (event) => {
+                console.log('[PARENT]: Unloading embedded app');
+                iframe.postMessage({ type: 'unload' }, 'http://localhost:3001');
+            });
+        </script>
+    </body>
+</html>
